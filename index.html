@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FIFA World Cup 2026 — Real Bracket</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #080f1c;
+      color: #c8d8e8;
+      min-height: 100vh;
+      overflow-x: auto;
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 14px 20px 10px;
+      background: linear-gradient(180deg, #0b1829 0%, #080f1c 100%);
+      border-bottom: 2px solid #b8960c;
+      gap: 3px;
+    }
+    header h1 { font-size: 1.5em; font-weight: 700; letter-spacing: 4px; color: #d4a017; text-transform: uppercase; }
+    header p  { font-size: 0.72em; color: #5a7a9a; letter-spacing: 1px; }
+
+    /* ── STATUS BANNER ── */
+    #status-bar {
+      background: #0d1f0d;
+      border-bottom: 1px solid #1a3a1a;
+      padding: 7px 20px;
+      font-size: 0.73em;
+      color: #6daa60;
+      text-align: center;
+    }
+    #status-bar strong { color: #90d880; }
+    #status-bar .warn { color: #c9a227; }
+
+    /* ── CHAMP BAR ── */
+    #champ-bar {
+      text-align: center;
+      padding: 7px 20px;
+      font-size: 0.85em;
+      color: #4a6a8a;
+      border-bottom: 1px solid #111e30;
+      min-height: 30px;
+      transition: all 0.4s;
+    }
+    #champ-bar.lit {
+      background: linear-gradient(90deg, #0c1f0c, #162a16, #0c1f0c);
+      color: #7ecf60;
+      font-size: 1em;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    /* ── CONTROLS ── */
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 9px 20px;
+      border-bottom: 1px solid #0e1c2e;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 6px 15px;
+      border: 1px solid #b8960c;
+      border-radius: 3px;
+      background: transparent;
+      color: #d4a017;
+      cursor: pointer;
+      font-size: 0.72em;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .btn:hover { background: #b8960c; color: #080f1c; }
+
+    /* ── LEGEND ── */
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      padding: 5px 20px;
+      font-size: 0.67em;
+      color: #3a5570;
+      border-bottom: 1px solid #0e1c2e;
+      flex-wrap: wrap;
+    }
+    .legend span { display: flex; align-items: center; gap: 5px; }
+    .leg-dot { width: 9px; height: 9px; border-radius: 1px; display: inline-block; }
+    .leg-dot.win  { background: #2e7d32; }
+    .leg-dot.loss { background: #2a2a2a; border: 1px solid #333; }
+    .leg-dot.tbd  { background: #1c3352; border: 1px solid #2d5080; }
+    .leg-dot.proj { background: #2d1f00; border: 1px dashed #b8960c; }
+
+    /* ── BRACKET ── */
+    #bracket-scroll { overflow-x: auto; padding: 24px 20px 32px; }
+    #bracket { display: flex; align-items: stretch; width: fit-content; margin: 0 auto; height: 720px; }
+
+    .rcol { display: flex; flex-direction: column; }
+    .rlabel {
+      text-align: center;
+      font-size: 0.58em;
+      font-weight: 700;
+      color: #b8960c;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      white-space: nowrap;
+      padding-bottom: 8px;
+      height: 22px;
+    }
+    .rmatches {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+    }
+
+    /* ── MATCH / TEAM BUTTONS ── */
+    .match { display: flex; flex-direction: column; position: relative; }
+
+    /* match number badge */
+    .match::before {
+      content: attr(data-match);
+      position: absolute;
+      top: -13px;
+      left: 0;
+      font-size: 0.52em;
+      color: #2d4a6a;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .tbtn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      width: 158px;
+      height: 30px;
+      padding: 0 7px;
+      background: #111e30;
+      border: 1px solid #1c3352;
+      cursor: pointer;
+      font-size: 0.73em;
+      font-family: inherit;
+      color: #b8cfe0;
+      text-align: left;
+      outline: none;
+      transition: background 0.12s, border-color 0.12s, color 0.12s;
+      overflow: hidden;
+    }
+    .tbtn:first-child { border-bottom: none; border-radius: 2px 2px 0 0; }
+    .tbtn:last-child  { border-radius: 0 0 2px 2px; }
+
+    /* Projected/uncertain team */
+    .tbtn.proj {
+      border-style: dashed;
+      border-color: #2a3d50;
+      color: #8aaccc;
+    }
+    .tbtn.proj::after {
+      content: '⚠';
+      font-size: 0.7em;
+      color: #b8960c;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .tbtn:hover:not(:disabled):not(.win):not(.loss) {
+      background: #1a3050;
+      border-color: #d4a017;
+      color: #fff;
+      z-index: 2;
+    }
+    .tbtn.win {
+      background: #0d2212;
+      border-color: #2e7d32;
+      border-style: solid;
+      color: #6dd56e;
+    }
+    .tbtn.win::after { display: none; }
+    .tbtn.loss {
+      background: #0c141d;
+      border-color: #131f2e;
+      border-style: solid;
+      color: #2a4060;
+      text-decoration: line-through;
+      cursor: default;
+    }
+    .tbtn.loss::after { display: none; }
+    .tbtn.tbd-slot {
+      color: #253a50;
+      font-style: italic;
+      cursor: default;
+      border-style: dotted;
+    }
+    .tbtn:disabled { cursor: default; }
+    .tbtn .fl { font-size: 1em; line-height: 1; flex-shrink: 0; }
+    .tbtn .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+
+    /* ── CONNECTORS ── */
+    .conn { width: 18px; flex-shrink: 0; }
+
+    /* ── FINAL COLUMN ── */
+    .final-wrap { display: flex; flex-direction: column; align-items: center; padding: 0 4px; }
+    .final-wrap .rlabel { color: #d4a017; }
+    .final-inner { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+    .trophy-box { text-align: center; margin-bottom: 2px; }
+    .trophy-box .ico { font-size: 2.2em; line-height: 1; }
+    .trophy-box .lbl { font-size: 0.57em; color: #5a7a9a; text-transform: uppercase; letter-spacing: 2px; margin-top: 3px; }
+    .trophy-box .name { font-size: 0.88em; color: #d4a017; font-weight: 700; margin-top: 4px; min-height: 17px; }
+
+    /* ── THIRD PLACE ── */
+    #third-section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 8px 24px;
+      border-top: 1px solid #0e1c2e;
+      font-size: 0.75em;
+      color: #4a6a8a;
+    }
+    .match3 { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    .t3label { font-size: 0.85em; color: #b8960c; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+    .t3teams { display: flex; align-items: center; gap: 8px; }
+    .t3btn {
+      display: flex; align-items: center; gap: 5px;
+      padding: 5px 10px;
+      background: #111e30; border: 1px solid #1c3352; border-radius: 3px;
+      cursor: pointer; font-size: 1em; font-family: inherit; color: #b8cfe0;
+      transition: all 0.12s;
+    }
+    .t3btn:hover:not(:disabled) { background: #1a3050; border-color: #d4a017; }
+    .t3btn.win  { background: #0d2212; border-color: #2e7d32; color: #6dd56e; }
+    .t3btn.loss { background: #0c141d; color: #2a4060; cursor: default; text-decoration: line-through; }
+    .t3btn:disabled { cursor: default; }
+    .vs { color: #3a5570; font-size: 0.9em; }
+
+    .hint { text-align: center; font-size: 0.67em; color: #1e3050; padding: 7px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>⚽ FIFA World Cup 2026 · Round of 32</h1>
+  <p>Real bracket · Based on current group stage standings · Click a team to advance them</p>
+</header>
+
+<div id="status-bar">
+  <strong>As of June 25, 2026</strong> —
+  <strong>Confirmed:</strong> Germany, France, USA, Brazil, Argentina, Switzerland, Colombia, Mexico, Norway, South Africa, Bosnia (3rd ✓) &nbsp;|&nbsp;
+  <span class="warn">⚠ Projected:</span> Netherlands 1st F · Austria/Algeria J2/J3 · Ivory Coast E2 · England/Croatia L1/L2 · Groups G &amp; H TBD
+</div>
+
+<div id="champ-bar">🏆 Pick your World Cup champion!</div>
+
+<div class="controls">
+  <button class="btn" onclick="resetAll()">↺ Reset</button>
+  <button class="btn" onclick="randomize()">🎲 Randomize</button>
+  <button class="btn" onclick="fillFavorites()">⭐ Favorites</button>
+  <button class="btn" onclick="fillUpsets()">💥 Upsets</button>
+</div>
+
+<div class="legend">
+  <span><span class="leg-dot win"></span> Advanced</span>
+  <span><span class="leg-dot loss"></span> Eliminated</span>
+  <span><span class="leg-dot tbd"></span> TBD</span>
+  <span><span class="leg-dot proj"></span> Projected ⚠ (group stage ongoing)</span>
+  <span style="color:#5a7a9a">· Click winner again to undo ·</span>
+</div>
+
+<div id="bracket-scroll">
+  <div id="bracket"></div>
+</div>
+
+<div id="third-section"></div>
+<div class="hint">Scroll horizontally · ⚠ = still being decided by ongoing group stage games</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// TEAMS
+// Real 2026 World Cup R32 participants, ordered to match real bracket structure.
+//
+// LEFT bracket (indices 0-15, top→bottom):
+//   M74: Germany vs Scotland     (1E vs 3C)
+//   M77: France vs Sweden        (1I vs 3F)  ← Sweden proj. 3rd F
+//   M73: South Africa vs Canada  (2A vs 2B)
+//   M75: Netherlands vs Morocco  (1F vs 2C)  ← Netherlands proj. 1st F
+//   M81: USA vs Bosnia           (1D vs 3B)  ← Bosnia CONFIRMED best 3rd
+//   M82: Spain vs Algeria        (1G vs 3J)  ← Spain proj. 1G; Algeria proj. 3J
+//   M83: Uzbekistan vs Croatia   (2K vs 2L)  ← proj.; both groups in play
+//   M84: [Group H 1st] vs Austria(1H vs 2J)  ← Austria proj. 2nd J
+//
+// RIGHT bracket (indices 16-31, top→bottom):
+//   M76: Brazil vs Japan         (1C vs 2F)  ← Japan proj. 2nd F
+//   M78: Ivory Coast vs Norway   (2E vs 2I)  ← Ivory Coast proj. 2nd E
+//   M79: Mexico vs Cape Verde    (1A vs 3H)
+//   M80: England vs DR Congo     (1L vs 3K)  ← England proj. 1st L
+//   M86: Argentina vs [H runner-up] (1J vs 2H)
+//   M88: Australia vs Portugal   (2D vs 2G)  ← Portugal proj. 2nd G
+//   M87: Colombia vs Paraguay    (1K vs 3D)  ← Paraguay proj. 3rd D
+//   M85: Switzerland vs Belgium  (1B vs 3G)
+//
+// ⚠ "proj." = awaiting final group stage games (June 25-27)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const T = [
+  // ── LEFT BRACKET ──────────────────────────────────────────────────────────
+  // M74
+  {n:'Germany',       f:'🇩🇪', proj:false, tag:'1st Group E'},      // 0
+  {n:'Scotland',      f:'🏴󠁧󠁢󠁳󠁣󠁴󠁿', proj:false, tag:'3rd Group C'},      // 1
+  // M77
+  {n:'France',        f:'🇫🇷', proj:false, tag:'1st Group I'},      // 2
+  {n:'Sweden',        f:'🇸🇪', proj:true,  tag:'3rd Group F ⚠'},   // 3
+  // M73
+  {n:'South Africa',  f:'🇿🇦', proj:false, tag:'2nd Group A'},      // 4
+  {n:'Canada',        f:'🇨🇦', proj:false, tag:'2nd Group B'},      // 5
+  // M75
+  {n:'Netherlands',   f:'🇳🇱', proj:true,  tag:'1st Group F ⚠'},   // 6
+  {n:'Morocco',       f:'🇲🇦', proj:false, tag:'2nd Group C'},      // 7
+  // M81
+  {n:'USA',           f:'🇺🇸', proj:false, tag:'1st Group D'},      // 8
+  {n:'Bosnia & Herz.',f:'🇧🇦', proj:false, tag:'3rd Group B ✓'},    // 9
+  // M82
+  {n:'Spain',         f:'🇪🇸', proj:true,  tag:'1st Group G ⚠'},   // 10
+  {n:'Algeria',       f:'🇩🇿', proj:true,  tag:'3rd Group J ⚠'},   // 11
+  // M83
+  {n:'Uzbekistan',    f:'🇺🇿', proj:true,  tag:'2nd Group K ⚠'},   // 12
+  {n:'Croatia',       f:'🇭🇷', proj:true,  tag:'2nd Group L ⚠'},   // 13
+  // M84
+  {n:'TBD (Grp H)',   f:'🏳️', proj:true,  tag:'1st Group H ⚠'},   // 14
+  {n:'Austria',       f:'🇦🇹', proj:true,  tag:'2nd Group J ⚠'},   // 15
+
+  // ── RIGHT BRACKET ─────────────────────────────────────────────────────────
+  // M76
+  {n:'Brazil',        f:'🇧🇷', proj:false, tag:'1st Group C'},      // 16
+  {n:'Japan',         f:'🇯🇵', proj:true,  tag:'2nd Group F ⚠'},   // 17
+  // M78
+  {n:'Ivory Coast',   f:'🇨🇮', proj:true,  tag:'2nd Group E ⚠'},   // 18
+  {n:'Norway',        f:'🇳🇴', proj:false, tag:'2nd Group I'},      // 19
+  // M79
+  {n:'Mexico',        f:'🇲🇽', proj:false, tag:'1st Group A'},      // 20
+  {n:'Cape Verde',    f:'🇨🇻', proj:false, tag:'3rd Group H'},      // 21
+  // M80
+  {n:'England',       f:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', proj:true,  tag:'1st Group L ⚠'},   // 22
+  {n:'DR Congo',      f:'🇨🇩', proj:true,  tag:'3rd Group K ⚠'},   // 23
+  // M86
+  {n:'Argentina',     f:'🇦🇷', proj:false, tag:'1st Group J'},      // 24
+  {n:'TBD (Grp H)',   f:'🏳️', proj:true,  tag:'2nd Group H ⚠'},   // 25
+  // M88
+  {n:'Australia',     f:'🇦🇺', proj:false, tag:'2nd Group D'},      // 26
+  {n:'Portugal',      f:'🇵🇹', proj:true,  tag:'2nd Group G ⚠'},   // 27
+  // M87
+  {n:'Colombia',      f:'🇨🇴', proj:false, tag:'1st Group K'},      // 28
+  {n:'Paraguay',      f:'🇵🇾', proj:true,  tag:'3rd Group D ⚠'},   // 29
+  // M85
+  {n:'Switzerland',   f:'🇨🇭', proj:false, tag:'1st Group B'},      // 30
+  {n:'Belgium',       f:'🇧🇪', proj:false, tag:'3rd Group G'},      // 31
+];
+
+// Match labels (what to display above each R32 match)
+const MATCH_LABELS = [
+  'M74','M77','M73','M75',  // left side, positions 0-3
+  'M81','M82','M83','M84',  // left side, positions 4-7
+  'M76','M78','M79','M80',  // right side, positions 0-3
+  'M86','M88','M87','M85',  // right side, positions 4-7
+];
+
+// Relative team strength (for weighted fills)
+const STR = {
+  'France':10,'Brazil':10,'Argentina':9,'Germany':9,'Spain':9,
+  'England':8,'Netherlands':8,'Portugal':8,'Belgium':7,'Croatia':7,
+  'Switzerland':7,'USA':7,'Norway':6,'Colombia':6,'Mexico':6,
+  'Australia':5,'Japan':5,'Morocco':5,'Uruguay':5,'Sweden':4,
+  'Algeria':4,'Austria':4,'South Africa':4,'Ivory Coast':4,
+  'Scotland':3,'Paraguay':3,'Bosnia & Herz.':3,'Canada':3,
+  'DR Congo':2,'Uzbekistan':2,'Cape Verde':2,'TBD (Grp H)':3,
+};
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let S = [];
+let S3 = { t1: null, t2: null, winner: null };
+
+function init() {
+  S = [16,8,4,2,1].map(n => Array.from({length:n}, () => ({t1:null,t2:null,winner:null})));
+  for (let m = 0; m < 16; m++) {
+    S[0][m].t1 = m * 2;
+    S[0][m].t2 = m * 2 + 1;
+  }
+  S3 = { t1: null, t2: null, winner: null };
+}
+
+function setWinner(round, matchIdx, teamIdx) {
+  if (teamIdx === null) return;
+  const match = S[round][matchIdx];
+  if (match.winner === teamIdx) { clearFrom(round, matchIdx); return; }
+  match.winner = teamIdx;
+  if (round < 4) {
+    const nextM = Math.floor(matchIdx / 2), nextSlot = matchIdx % 2;
+    const nxt = S[round+1][nextM];
+    const prev = nextSlot === 0 ? nxt.t1 : nxt.t2;
+    if (prev !== null && prev !== teamIdx) clearFrom(round+1, nextM);
+    if (nextSlot === 0) nxt.t1 = teamIdx; else nxt.t2 = teamIdx;
+  }
+  if (round === 3) rebuildThird();
+  renderBracket(); updateChamp();
+}
+
+function clearFrom(round, matchIdx) {
+  const match = S[round][matchIdx];
+  const old = match.winner;
+  match.winner = null;
+  if (round < 4 && old !== null) {
+    const nextM = Math.floor(matchIdx / 2), nextSlot = matchIdx % 2;
+    const nxt = S[round+1][nextM];
+    if (nextSlot === 0 && nxt.t1 === old) { nxt.t1 = null; clearFrom(round+1, nextM); }
+    else if (nextSlot === 1 && nxt.t2 === old) { nxt.t2 = null; clearFrom(round+1, nextM); }
+  }
+  if (round >= 3) rebuildThird();
+}
+
+function rebuildThird() {
+  const sf0 = S[3][0], sf1 = S[3][1];
+  const l0 = sf0.winner !== null ? (sf0.winner===sf0.t1 ? sf0.t2 : sf0.t1) : null;
+  const l1 = sf1.winner !== null ? (sf1.winner===sf1.t1 ? sf1.t2 : sf1.t1) : null;
+  if (l0 !== S3.t1 || l1 !== S3.t2) S3 = { t1:l0, t2:l1, winner:null };
+}
+
+function setWinner3(teamIdx) {
+  if (teamIdx === null) return;
+  S3.winner = S3.winner === teamIdx ? null : teamIdx;
+  renderThird(); updateChamp();
+}
+
+function batchSet(r, m, ti) {
+  const match = S[r][m];
+  if (match.winner !== null || ti === null) return;
+  match.winner = ti;
+  if (r < 4) {
+    const nextM = Math.floor(m/2), nextSlot = m%2;
+    const nxt = S[r+1][nextM];
+    if (nextSlot===0) nxt.t1=ti; else nxt.t2=ti;
+  }
+}
+
+function resetAll() { init(); renderBracket(); renderThird(); updateChamp(); }
+
+function pickWeighted(ti1, ti2, favorStrong) {
+  const w1 = STR[T[ti1]?.n] || 3, w2 = STR[T[ti2]?.n] || 3;
+  const [s1, s2] = favorStrong ? [w1, w2] : [11-w1, 11-w2];
+  return Math.random() < s1/(s1+s2) ? ti1 : ti2;
+}
+
+function fillAll(fn) {
+  for (let r = 0; r <= 4; r++) {
+    for (let m = 0; m < S[r].length; m++) {
+      const match = S[r][m];
+      if (match.winner === null && match.t1 !== null && match.t2 !== null)
+        batchSet(r, m, fn(match.t1, match.t2));
+    }
+  }
+  rebuildThird();
+  if (S3.t1 !== null && S3.t2 !== null)
+    S3.winner = fn(S3.t1, S3.t2);
+  renderBracket(); renderThird(); updateChamp();
+}
+
+function randomize()     { fillAll((a,b) => Math.random()<0.5 ? a : b); }
+function fillFavorites() { fillAll((a,b) => pickWeighted(a,b,true)); }
+function fillUpsets()    { fillAll((a,b) => pickWeighted(a,b,false)); }
+
+// ── RENDER ───────────────────────────────────────────────────────────────────
+const ROUND_NAMES = ['Round of 32','Round of 16','Quarterfinals','Semifinals','Final'];
+const HALVES = [8,4,2,1];
+
+function makeTeamBtn(round, matchIdx, teamIdx, winnerIdx, clickFn) {
+  const btn = document.createElement('button');
+  btn.className = 'tbtn';
+
+  if (teamIdx === null) {
+    btn.classList.add('tbd-slot');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="nm">TBD</span>';
+    return btn;
+  }
+
+  const team = T[teamIdx];
+  const isWin  = winnerIdx === teamIdx;
+  const isLoss = winnerIdx !== null && winnerIdx !== teamIdx;
+
+  if (team.proj && !isWin && !isLoss) btn.classList.add('proj');
+  if (isWin)  btn.classList.add('win');
+  if (isLoss) { btn.classList.add('loss'); btn.disabled = true; }
+
+  btn.innerHTML = `<span class="fl">${team.f}</span><span class="nm">${team.n}</span>`;
+  if (!isLoss) btn.addEventListener('click', () => clickFn());
+  return btn;
+}
+
+function makeMatch(round, matchIdx, label) {
+  const match = S[round][matchIdx];
+  const div = document.createElement('div');
+  div.className = 'match';
+  if (label) div.setAttribute('data-match', label);
+
+  div.appendChild(makeTeamBtn(round, matchIdx, match.t1, match.winner,
+    () => setWinner(round, matchIdx, match.t1)));
+  div.appendChild(makeTeamBtn(round, matchIdx, match.t2, match.winner,
+    () => setWinner(round, matchIdx, match.t2)));
+  return div;
+}
+
+function makeRoundCol(roundIdx, startM, count, labels) {
+  const col = document.createElement('div');
+  col.className = 'rcol';
+  const lbl = document.createElement('div');
+  lbl.className = 'rlabel';
+  lbl.textContent = ROUND_NAMES[roundIdx];
+  col.appendChild(lbl);
+  const ms = document.createElement('div');
+  ms.className = 'rmatches';
+  for (let m = startM; m < startM+count; m++) {
+    const localIdx = m - startM;
+    ms.appendChild(makeMatch(roundIdx, m, labels ? labels[localIdx] : null));
+  }
+  col.appendChild(ms);
+  return col;
+}
+
+function makeConn(w) {
+  const d = document.createElement('div');
+  d.className = 'conn';
+  d.style.width = w+'px';
+  return d;
+}
+
+function makeFinalCol() {
+  const final = S[4][0];
+  const wrap = document.createElement('div');
+  wrap.className = 'final-wrap rcol';
+  const lbl = document.createElement('div');
+  lbl.className = 'rlabel';
+  lbl.textContent = '⚽ FINAL · Jul 19';
+  wrap.appendChild(lbl);
+  const inner = document.createElement('div');
+  inner.className = 'final-inner';
+  const trophy = document.createElement('div');
+  trophy.className = 'trophy-box';
+  const champ = final.winner !== null ? `${T[final.winner].f} ${T[final.winner].n}` : '—';
+  trophy.innerHTML = `<div class="ico">🏆</div><div class="lbl">Champion</div><div class="name">${champ}</div>`;
+  inner.appendChild(trophy);
+  const matchDiv = makeMatch(4, 0, 'M104');
+  inner.appendChild(matchDiv);
+  wrap.appendChild(inner);
+  return wrap;
+}
+
+// Match labels for each position
+const LEFT_LABELS  = ['M74','M77','M73','M75','M81','M82','M83','M84'];
+const RIGHT_LABELS = ['M76','M78','M79','M80','M86','M88','M87','M85'];
+
+function renderBracket() {
+  const root = document.getElementById('bracket');
+  root.innerHTML = '';
+
+  // Left side: R32 → SF
+  for (let r = 0; r < 4; r++) {
+    const labels = r === 0 ? LEFT_LABELS.slice(0, 8) : null;
+    root.appendChild(makeRoundCol(r, 0, HALVES[r], labels));
+    root.appendChild(makeConn(14));
+  }
+
+  root.appendChild(makeFinalCol());
+
+  // Right side: SF → R32
+  for (let r = 3; r >= 0; r--) {
+    root.appendChild(makeConn(14));
+    const startM = [8,4,2,1][r];
+    const labels = r === 0 ? RIGHT_LABELS.slice(0, 8) : null;
+    root.appendChild(makeRoundCol(r, startM, HALVES[r], labels));
+  }
+}
+
+function renderThird() {
+  const sec = document.getElementById('third-section');
+  sec.innerHTML = '';
+  if (S3.t1 === null && S3.t2 === null) return;
+  const lbl = document.createElement('div'); lbl.className = 't3label'; lbl.textContent = '🥉 3rd Place · Jul 18';
+  const row = document.createElement('div'); row.className = 't3teams';
+  function t3Btn(ti) {
+    if (ti === null) { const b=document.createElement('button'); b.className='t3btn'; b.disabled=true; b.innerHTML='<span>TBD</span>'; return b; }
+    const team = T[ti], isWin = S3.winner===ti, isLoss = S3.winner!==null && S3.winner!==ti;
+    const b = document.createElement('button');
+    b.className = 't3btn'+(isWin?' win':'')+(isLoss?' loss':'');
+    if (isLoss) b.disabled=true;
+    b.innerHTML = `<span>${team.f}</span><span>${team.n}</span>`;
+    if (!isLoss) b.addEventListener('click',()=>setWinner3(ti));
+    return b;
+  }
+  row.appendChild(t3Btn(S3.t1));
+  const vs=document.createElement('span'); vs.className='vs'; vs.textContent='vs'; row.appendChild(vs);
+  row.appendChild(t3Btn(S3.t2));
+  const m3=document.createElement('div'); m3.className='match3';
+  m3.appendChild(lbl); m3.appendChild(row);
+  sec.appendChild(m3);
+}
+
+function updateChamp() {
+  const bar = document.getElementById('champ-bar');
+  const final = S[4][0];
+  if (final.winner !== null) {
+    const t = T[final.winner];
+    bar.textContent = `🏆 World Cup Champion: ${t.f} ${t.n}! 🎉`;
+    bar.className = 'lit';
+  } else {
+    bar.textContent = '🏆 Pick your World Cup champion!';
+    bar.className = '';
+  }
+}
+
+init(); renderBracket(); renderThird(); updateChamp();
+</script>
+</body>
+</html>
