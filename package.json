@@ -1,0 +1,8 @@
+{
+    "name": "world-cup-2026-bracket",
+    "version": "1.0.0",
+    "description": "Interactive FIFA World Cup 2026 bracket",
+    "main": "server.js",
+    "scripts": { "start": "node server.js" },
+    "engines": { "node": ">=18" }
+}
