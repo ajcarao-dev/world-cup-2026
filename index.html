@@ -254,9 +254,7 @@
 </header>
 
 <div id="status-bar">
-  <strong>As of June 25, 2026</strong> —
-  <strong>Confirmed:</strong> Germany, France, USA, Brazil, Argentina, Switzerland, Colombia, Mexico, Norway, South Africa, Bosnia (3rd ✓) &nbsp;|&nbsp;
-  <span class="warn">⚠ Projected:</span> Netherlands 1st F · Austria/Algeria J2/J3 · Ivory Coast E2 · England/Croatia L1/L2 · Groups G &amp; H TBD
+  <strong>As of June 29, 2026</strong> — Group stage complete · All 32 teams confirmed · Round of 32 underway (June 28 – July 3)
 </div>
 
 <div id="champ-bar">🏆 Pick your World Cup champion!</div>
@@ -318,48 +316,48 @@ const T = [
   {n:'Scotland',      f:'🏴󠁧󠁢󠁳󠁣󠁴󠁿', proj:false, tag:'3rd Group C'},      // 1
   // M77
   {n:'France',        f:'🇫🇷', proj:false, tag:'1st Group I'},      // 2
-  {n:'Sweden',        f:'🇸🇪', proj:true,  tag:'3rd Group F ⚠'},   // 3
+  {n:'Sweden',        f:'🇸🇪', proj:false, tag:'3rd Group F'},   // 3
   // M73
   {n:'South Africa',  f:'🇿🇦', proj:false, tag:'2nd Group A'},      // 4
   {n:'Canada',        f:'🇨🇦', proj:false, tag:'2nd Group B'},      // 5
   // M75
-  {n:'Netherlands',   f:'🇳🇱', proj:true,  tag:'1st Group F ⚠'},   // 6
+  {n:'Netherlands',   f:'🇳🇱', proj:false, tag:'1st Group F'},   // 6
   {n:'Morocco',       f:'🇲🇦', proj:false, tag:'2nd Group C'},      // 7
   // M81
   {n:'USA',           f:'🇺🇸', proj:false, tag:'1st Group D'},      // 8
   {n:'Bosnia & Herz.',f:'🇧🇦', proj:false, tag:'3rd Group B ✓'},    // 9
   // M82
-  {n:'Spain',         f:'🇪🇸', proj:true,  tag:'1st Group G ⚠'},   // 10
-  {n:'Algeria',       f:'🇩🇿', proj:true,  tag:'3rd Group J ⚠'},   // 11
+  {n:'Spain',         f:'🇪🇸', proj:false, tag:'1st Group G'},   // 10
+  {n:'Algeria',       f:'🇩🇿', proj:false, tag:'3rd Group J'},   // 11
   // M83
-  {n:'Uzbekistan',    f:'🇺🇿', proj:true,  tag:'2nd Group K ⚠'},   // 12
-  {n:'Croatia',       f:'🇭🇷', proj:true,  tag:'2nd Group L ⚠'},   // 13
+  {n:'Portugal',      f:'🇵🇹', proj:false, tag:'2nd Group K'},   // 12
+  {n:'Croatia',       f:'🇭🇷', proj:false, tag:'2nd Group L'},   // 13
   // M84
-  {n:'TBD (Grp H)',   f:'🏳️', proj:true,  tag:'1st Group H ⚠'},   // 14
-  {n:'Austria',       f:'🇦🇹', proj:true,  tag:'2nd Group J ⚠'},   // 15
+  {n:'Spain',         f:'🇪🇸', proj:false, tag:'1st Group H'},   // 14
+  {n:'Austria',       f:'🇦🇹', proj:false, tag:'2nd Group J'},   // 15
 
   // ── RIGHT BRACKET ─────────────────────────────────────────────────────────
   // M76
   {n:'Brazil',        f:'🇧🇷', proj:false, tag:'1st Group C'},      // 16
-  {n:'Japan',         f:'🇯🇵', proj:true,  tag:'2nd Group F ⚠'},   // 17
+  {n:'Japan',         f:'🇯🇵', proj:false, tag:'2nd Group F'},   // 17
   // M78
-  {n:'Ivory Coast',   f:'🇨🇮', proj:true,  tag:'2nd Group E ⚠'},   // 18
+  {n:'Ivory Coast',   f:'🇨🇮', proj:false, tag:'2nd Group E'},   // 18
   {n:'Norway',        f:'🇳🇴', proj:false, tag:'2nd Group I'},      // 19
   // M79
   {n:'Mexico',        f:'🇲🇽', proj:false, tag:'1st Group A'},      // 20
-  {n:'Cape Verde',    f:'🇨🇻', proj:false, tag:'3rd Group H'},      // 21
+  {n:'Ecuador',       f:'🇪🇨', proj:false, tag:'3rd Group E'},      // 21
   // M80
-  {n:'England',       f:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', proj:true,  tag:'1st Group L ⚠'},   // 22
-  {n:'DR Congo',      f:'🇨🇩', proj:true,  tag:'3rd Group K ⚠'},   // 23
+  {n:'England',       f:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', proj:false, tag:'1st Group L'},   // 22
+  {n:'DR Congo',      f:'🇨🇩', proj:false, tag:'3rd Group K'},   // 23
   // M86
   {n:'Argentina',     f:'🇦🇷', proj:false, tag:'1st Group J'},      // 24
-  {n:'TBD (Grp H)',   f:'🏳️', proj:true,  tag:'2nd Group H ⚠'},   // 25
+  {n:'Cape Verde',    f:'🇨🇻', proj:false, tag:'2nd Group H'},   // 25
   // M88
   {n:'Australia',     f:'🇦🇺', proj:false, tag:'2nd Group D'},      // 26
-  {n:'Portugal',      f:'🇵🇹', proj:true,  tag:'2nd Group G ⚠'},   // 27
+  {n:'Egypt',         f:'🇪🇬', proj:false, tag:'2nd Group G'},   // 27
   // M87
   {n:'Colombia',      f:'🇨🇴', proj:false, tag:'1st Group K'},      // 28
-  {n:'Paraguay',      f:'🇵🇾', proj:true,  tag:'3rd Group D ⚠'},   // 29
+  {n:'Paraguay',      f:'🇵🇾', proj:false, tag:'3rd Group D'},   // 29
   // M85
   {n:'Switzerland',   f:'🇨🇭', proj:false, tag:'1st Group B'},      // 30
   {n:'Belgium',       f:'🇧🇪', proj:false, tag:'3rd Group G'},      // 31
@@ -381,7 +379,7 @@ const STR = {
   'Australia':5,'Japan':5,'Morocco':5,'Uruguay':5,'Sweden':4,
   'Algeria':4,'Austria':4,'South Africa':4,'Ivory Coast':4,
   'Scotland':3,'Paraguay':3,'Bosnia & Herz.':3,'Canada':3,
-  'DR Congo':2,'Uzbekistan':2,'Cape Verde':2,'TBD (Grp H)':3,
+  'DR Congo':2,'Ecuador':3,'Cape Verde':2,'Egypt':4,
 };
 
 // ── STATE ────────────────────────────────────────────────────────────────────
