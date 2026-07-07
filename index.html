@@ -254,7 +254,7 @@
 </header>
 
 <div id="status-bar">
-  <strong>As of June 29, 2026</strong> — Group stage complete · All 32 teams confirmed · Round of 32 underway (June 28–July 3)
+  <strong>As of July 7, 2026</strong> — Group stage complete · All 32 teams confirmed · Real-world Round of 32 has concluded (Jun 28–Jul 3) · Round of 16 underway (Jul 4–7)
 </div>
 
 <div id="champ-bar">🏆 Pick your World Cup champion!</div>
@@ -284,29 +284,31 @@
 <script>
 // ─────────────────────────────────────────────────────────────────────────────
 // TEAMS
-// Real 2026 World Cup R32 participants, ordered to match real bracket structure.
+// Real 2026 World Cup R32 field — FINAL. Group stage complete (12/12 groups)
+// and Round of 32 itself has already been played (Jun 28–Jul 3); this bracket
+// lets fans pick their own hypothetical results starting from the real R32 field.
 //
 // LEFT bracket (indices 0-15, top→bottom):
-//   M74: Germany vs Scotland     (1E vs 3C)
-//   M77: France vs Sweden        (1I vs 3F)  ← Sweden proj. 3rd F
-//   M73: South Africa vs Canada  (2A vs 2B)
-//   M75: Netherlands vs Morocco  (1F vs 2C)  ← Netherlands proj. 1st F
-//   M81: USA vs Bosnia           (1D vs 3B)  ← Bosnia CONFIRMED best 3rd
-//   M82: Spain vs Algeria        (1G vs 3J)  ← Spain proj. 1G; Algeria proj. 3J
-//   M83: Uzbekistan vs Croatia   (2K vs 2L)  ← proj.; both groups in play
-//   M84: [Group H 1st] vs Austria(1H vs 2J)  ← Austria proj. 2nd J
+//   M74: Germany vs Paraguay      (1E vs 3D)
+//   M77: France vs Sweden         (1I vs 3F)
+//   M73: South Africa vs Canada   (2A vs 2B)
+//   M75: Netherlands vs Morocco   (1F vs 2C)
+//   M81: USA vs Bosnia & Herz.    (1D vs 3B)
+//   M82: Belgium vs Senegal       (1G vs 3I)
+//   M83: Portugal vs Croatia      (2K vs 2L)
+//   M84: Spain vs Austria         (1H vs 2J)
 //
 // RIGHT bracket (indices 16-31, top→bottom):
-//   M76: Brazil vs Japan         (1C vs 2F)  ← Japan proj. 2nd F
-//   M78: Ivory Coast vs Norway   (2E vs 2I)  ← Ivory Coast proj. 2nd E
-//   M79: Mexico vs Cape Verde    (1A vs 3H)
-//   M80: England vs DR Congo     (1L vs 3K)  ← England proj. 1st L
-//   M86: Argentina vs [H runner-up] (1J vs 2H)
-//   M88: Australia vs Portugal   (2D vs 2G)  ← Portugal proj. 2nd G
-//   M87: Colombia vs Paraguay    (1K vs 3D)  ← Paraguay proj. 3rd D
-//   M85: Switzerland vs Belgium  (1B vs 3G)
+//   M76: Brazil vs Japan          (1C vs 2F)
+//   M78: Ivory Coast vs Norway    (2E vs 2I)
+//   M79: Mexico vs Ecuador        (1A vs 3E)
+//   M80: England vs DR Congo      (1L vs 3K)
+//   M86: Argentina vs Cape Verde  (1J vs 2H)
+//   M88: Australia vs Egypt       (2D vs 2G)
+//   M87: Colombia vs Ghana        (1K vs 3L)
+//   M85: Switzerland vs Algeria   (1B vs 3J)
 //
-// ⚠ "proj." = awaiting final group stage games (June 25-27)
+// Bracket topology per FIFA Annex C: M81↔M82 and M83↔M84 meet in Round of 16.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const T = [
@@ -327,14 +329,14 @@ const T = [
   {n:'USA', f:'🇺🇸', proj:false, tag:'1st Group D'},      // 8
   {n:'Bosnia & Herz.', f:'🇧🇦', proj:false, tag:'3rd Group B'},      // 9
   // M82
-  {n:'Spain', f:'🇪🇸', proj:false, tag:'1st Group H'},      // 10
-  {n:'Austria', f:'🇦🇹', proj:false, tag:'2nd Group J'},      // 11
+  {n:'Belgium', f:'🇧🇪', proj:false, tag:'1st Group G'},      // 10
+  {n:'Senegal', f:'🇸🇳', proj:false, tag:'3rd Group I'},      // 11
   // M83
   {n:'Portugal', f:'🇵🇹', proj:false, tag:'2nd Group K'},      // 12
   {n:'Croatia', f:'🇭🇷', proj:false, tag:'2nd Group L'},      // 13
   // M84
-  {n:'Belgium', f:'🇧🇪', proj:false, tag:'1st Group G'},      // 14
-  {n:'Senegal', f:'🇸🇳', proj:false, tag:'3rd Group I'},      // 15
+  {n:'Spain', f:'🇪🇸', proj:false, tag:'1st Group H'},      // 14
+  {n:'Austria', f:'🇦🇹', proj:false, tag:'2nd Group J'},      // 15
 
   // ── RIGHT BRACKET ─────────────────────────────────────────────────────────
   // M76
